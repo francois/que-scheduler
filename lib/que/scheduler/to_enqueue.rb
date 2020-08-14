@@ -19,7 +19,7 @@ module Que
         end
 
         def valid_job_class?(job_class)
-          type_from_job_class(job_class).present?
+          !!type_from_job_class(job_class)
         end
 
         def active_job_version

@@ -71,7 +71,7 @@ RSpec.describe Que::Scheduler::SchedulerJob do
         DbSupport.work_job(job)
         expect_itself_enqueued
         all_enqueued = Que.job_stats.map do |j|
-          j.symbolize_keys.slice(:job_class)
+          j.map(&:to_sym).slice(:job_class)
         end
         all_enqueued.reject! { |row| row[:job_class] == "Que::Scheduler::SchedulerJob" }
         expect(all_enqueued).to eq(to_be_scheduled)
@@ -200,7 +200,7 @@ RSpec.describe Que::Scheduler::SchedulerJob do
     expect(hash.fetch(:error_count)).to eq(0)
     expect(hash.fetch(:job_class)).to eq("Que::Scheduler::SchedulerJob")
     expect(hash.fetch(:run_at)).to eq(
-      run_time.beginning_of_minute + described_class::SCHEDULER_FREQUENCY
+      run_time + described_class::SCHEDULER_FREQUENCY
     )
     expect_job_args_to_equal(
       hash[:args], [{ last_run_time: run_time.iso8601, job_dictionary: full_dictionary }]
